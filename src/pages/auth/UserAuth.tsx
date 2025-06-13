@@ -32,6 +32,7 @@ const UserAuth = () => {
       } else if (profile.user_type === 'responder') {
         navigate("/dashboard/responder");
       }
+      // console.log(user, profile)
     }
   }, [user, profile, navigate]);
 

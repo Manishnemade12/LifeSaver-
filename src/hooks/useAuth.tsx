@@ -1,4 +1,3 @@
-
 import { useState, useEffect, createContext, useContext } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -29,25 +28,55 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       async (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
-        
+
         if (session?.user) {
-          // Fetch user profile with related details
           setTimeout(async () => {
-            const { data: profileData } = await supabase
+            // Fetch user profile
+            const { data: profileData, error: profileError } = await supabase
               .from('profiles')
-              .select(`
-                *, 
-                responder_details(*),
-                hospital_details(*)
-              `)
+              .select('*')
               .eq('id', session.user.id)
               .single();
-            setProfile(profileData);
+
+            if (profileError) {
+              setProfile(null);
+              setLoading(false);
+              return;
+            }
+
+            let hospitalDetails = null;
+            let responderDetails = null;
+
+            // Fetch related details based on user_type
+            if (profileData?.user_type === 'hospital') {
+              const { data } = await supabase
+                .from('hospital_details')
+                .select('*')
+                .eq('hospital_id', session.user.id)
+                .single();
+              hospitalDetails = data;
+            }
+
+            if (profileData?.user_type === 'responder') {
+              const { data } = await supabase
+                .from('responder_details')
+                .select('*')
+                .eq('id', session.user.id)
+                .single();
+              responderDetails = data;
+            }
+
+            setProfile({
+              ...profileData,
+              hospital_details: hospitalDetails,
+              responder_details: responderDetails,
+            });
+            setLoading(false);
           }, 0);
         } else {
           setProfile(null);
+          setLoading(false);
         }
-        setLoading(false);
       }
     );
 
@@ -78,14 +107,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       email,
       password
     });
-    
+
     if (!error) {
       toast({
         title: "Welcome back!",
         description: "Successfully logged in."
       });
     }
-    
+
     return { error };
   };
 

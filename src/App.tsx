@@ -46,10 +46,18 @@ const App = () => (
                 </ProtectedRoute>
               }
             />
-            <Route
+            {/* <Route
               path="/dashboard/hospital"
               element={
                 <ProtectedRoute requiredUserType="hospital">
+                  <HospitalDashboard />
+                </ProtectedRoute>
+              }
+            /> */}
+            <Route
+              path="/dashboard/hospital"
+              element={
+                <ProtectedRoute >
                   <HospitalDashboard />
                 </ProtectedRoute>
               }

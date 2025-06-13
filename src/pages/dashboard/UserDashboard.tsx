@@ -18,7 +18,8 @@ import UserProfile from "@/components/UserProfile";
 import AnonymousReportForm from "@/components/AnonymousReportForm";
 import AnonymousReportsHistory from "@/components/AnonymousReportsHistory";
 import { useHospitalSOS } from '@/hooks/useHospitalSOS';
-
+import { supabase } from "@/integrations/supabase/client";
+import SOSButton from "@/components/r/sosButton";
 interface HospitalSOSDialogProps {
   userLocation: { lat: number; lng: number } | null;
 }
@@ -71,29 +72,7 @@ const { sendHospitalSOS, loading } = useHospitalSOS();
 
 
 
-const [sent, setSent] = useState(false);
 
-  const handleAutoSendSOS = async () => {
-    if (!userCoords || !profile?.phone) {
-      console.error('User location or phone number missing.');
-      return;
-    }
-
-    const userName = profile.first_name && profile.last_name
-      ? `${profile.first_name} ${profile.last_name}`
-      : 'Anonymous User';
-
-    await sendHospitalSOS({
-      user_name: userName,
-      user_phone: profile.phone,
-      latitude: userCoords.lat,
-      longitude: userCoords.lng,
-      emergency_type: 'medical',
-      description: 'Medical emergency assistance needed'
-    });
-
-    setSent(true);
-  };
   // Handle SOS button click
   const handleSOSClick = async (type: "medical" | "safety" | "general") => {
     setSelectedSOSType(type); // Store the selected type
@@ -105,9 +84,9 @@ const [sent, setSent] = useState(false);
       description: `${type.toUpperCase()} emergency alert in 3 seconds. Tap cancel to stop.`,
     });
 
-    if (type === "medical") {
-      await handleAutoSendSOS(); // call directly
-    }
+    // if (type === "medical") {
+    //   await handleAutoSendSOS(); // call directly
+    // }
   };
 
   const handleSOSCancel = () => {
@@ -181,178 +160,6 @@ const [sent, setSent] = useState(false);
       default: return <Flag className="h-4 w-4" />;
     }
   };
-
-// import { useState, useEffect } from "react";
-// import { Button } from "@/components/ui/button";
-// import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-// import { Input } from "@/components/ui/input";
-// import { Label } from "@/components/ui/label";
-// import { Badge } from "@/components/ui/badge";
-// import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-// import { Shield, Ambulance, Phone, MapPin, Users, History, Clock, Flag, User, MoreHorizontalIcon } from "lucide-react";
-// import { useAuth } from "@/hooks/useAuth";
-// import { useEmergencyAlerts } from "@/hooks/useEmergencyAlerts";
-// import { useEmergencyContacts } from "@/hooks/useEmergencyContacts";
-// import { useAnonymousReports } from "@/hooks/useAnonymousReports";
-// import { useToast } from "@/hooks/use-toast";
-// import { NearbyRespondersCard } from "@/components/NearbyRespondersCard";
-// import { AnonymousReportDialog } from "@/components/AnonymousReportDialog";
-// import UserProfile from "@/components/UserProfile";
-// import AnonymousReportForm from "@/components/AnonymousReportForm";
-// import AnonymousReportsHistory from "@/components/AnonymousReportsHistory";
-// import { useHospitalSOS } from '@/hooks/useHospitalSOS';
-
-// const UserDashboard = () => {
-//   const { user, profile, signOut } = useAuth();
-//   const { alerts, createAlert } = useEmergencyAlerts();
-//   const { contacts, addContact, removeContact } = useEmergencyContacts();
-//   const { submitReport } = useAnonymousReports();
-//   const { toast } = useToast();
-//   const { sendHospitalSOS, loading } = useHospitalSOS();
-
-//   const [sosCountdown, setSosCountdown] = useState(0);
-//   const [activeSOS, setActiveSOS] = useState(false);
-//   const [selectedSOSType, setSelectedSOSType] = useState<'medical' | 'safety' | 'general'>('medical');
-//   const [newContact, setNewContact] = useState({ name: "", phone: "" });
-//   const [location, setLocation] = useState("Getting location...");
-//   const [userCoords, setUserCoords] = useState<{ lat: number; lng: number } | null>(null);
-//   const [showProfile, setShowProfile] = useState(false);
-//   const [sent, setSent] = useState(false);
-
-//   useEffect(() => {
-//     if (navigator.geolocation) {
-//       navigator.geolocation.getCurrentPosition(
-//         (position) => {
-//           const coords = {
-//             lat: position.coords.latitude,
-//             lng: position.coords.longitude
-//           };
-//           setUserCoords(coords);
-//           setLocation(`${coords.lat.toFixed(4)}, ${coords.lng.toFixed(4)}`);
-//         },
-//         () => {
-//           setLocation("Location unavailable");
-//         }
-//       );
-//     }
-//   }, []);
-
-//   useEffect(() => {
-//     if (sosCountdown > 0) {
-//       const timer = setTimeout(() => setSosCountdown(sosCountdown - 1), 1000);
-//       return () => clearTimeout(timer);
-//     } else if (sosCountdown === 0 && activeSOS) {
-//       handleSOSActivated();
-//     }
-//   }, [sosCountdown, activeSOS]);
-
-//   const handleAutoSendSOS = async () => {
-//     if (!userCoords || !profile?.phone) {
-//       console.error('User location or phone number missing.');
-//       return;
-//     }
-
-//     const userName = profile.first_name && profile.last_name
-//       ? `${profile.first_name} ${profile.last_name}`
-//       : 'Anonymous User';
-
-//     await sendHospitalSOS({
-//       user_name: userName,
-//       user_phone: profile.phone,
-//       latitude: userCoords.lat,
-//       longitude: userCoords.lng,
-//       emergency_type: 'medical',
-//       description: 'Medical emergency assistance needed'
-//     });
-
-//     setSent(true);
-//   };
-
-//   const handleSOSClick = async (type: "medical" | "safety" | "general") => {
-//     setSelectedSOSType(type);
-//     setSosCountdown(3);
-//     setActiveSOS(true);
-
-//     toast({
-//       title: "SOS Alert Starting",
-//       description: `${type.toUpperCase()} emergency alert in 3 seconds. Tap cancel to stop.`,
-//     });
-
-//     if (type === "medical") {
-//       await handleAutoSendSOS();
-//     }
-//   };
-
-//   const handleSOSCancel = () => {
-//     setSosCountdown(0);
-//     setActiveSOS(false);
-//     setSelectedSOSType('medical');
-//     toast({
-//       title: "SOS Cancelled",
-//       description: "Emergency alert has been cancelled.",
-//     });
-//   };
-
-//   const handleSOSActivated = async () => {
-//     if (navigator.geolocation) {
-//       navigator.geolocation.getCurrentPosition(
-//         async (position) => {
-//           const locationData = {
-//             lat: position.coords.latitude,
-//             lng: position.coords.longitude,
-//             description: location
-//           };
-
-//           await createAlert(selectedSOSType, locationData, `${selectedSOSType.toUpperCase()} emergency assistance needed`);
-//           setActiveSOS(false);
-//           setSelectedSOSType('medical');
-//         },
-//         () => {
-//           toast({
-//             title: "Location Error",
-//             description: "Could not get your location for the emergency alert.",
-//             variant: "destructive"
-//           });
-//           setActiveSOS(false);
-//           setSelectedSOSType('medical');
-//         }
-//       );
-//     }
-//   };
-
-//   const handleAddContact = async () => {
-//     if (newContact.name && newContact.phone) {
-//       await addContact(newContact.name, newContact.phone);
-//       setNewContact({ name: "", phone: "" });
-//     }
-//   };
-
-//   const callContact = (phone: string) => {
-//     window.open(`tel:${phone}`);
-//   };
-
-//   const call911 = () => {
-//     window.open("tel:911");
-//   };
-
-//   const getStatusColor = (status: string) => {
-//     switch (status) {
-//       case "active": return "bg-red-100 text-red-800";
-//       case "acknowledged": return "bg-yellow-100 text-yellow-800";
-//       case "responding": return "bg-blue-100 text-blue-800";
-//       case "completed": return "bg-green-100 text-green-800";
-//       default: return "bg-gray-100 text-gray-800";
-//     }
-//   };
-
-//   const getTypeIcon = (type: string) => {
-//     switch (type) {
-//       case "medical": return <Ambulance className="h-4 w-4" />;
-//       case "safety": return <Shield className="h-4 w-4" />;
-//       case "general": return <Flag className="h-4 w-4" />;
-//       default: return <Flag className="h-4 w-4" />;
-//     }
-//   };
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -416,8 +223,14 @@ const [sent, setSent] = useState(false);
             <TabsTrigger value="reports">Reports</TabsTrigger>
           </TabsList>
 
+          
+
           <TabsContent value="emergency" className="space-y-6">
             {/* Emergency Actions */}
+ 
+  <SOSButton />
+
+
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
@@ -648,23 +461,6 @@ const [sent, setSent] = useState(false);
                 <CardTitle>Anonymous Safety Reports</CardTitle>
               </CardHeader>
               <CardContent>
-                {/* <div className="space-y-4">
-                  <div className="p-4 bg-blue-50 rounded-lg">
-                    <p className="text-sm text-blue-800">
-                      Help keep your community safe by reporting safety concerns anonymously.
-                    </p>
-                  </div>
-                  <AnonymousReportDialog
-                    onSubmit={submitReport}
-                    trigger={
-                      <Button className="w-full">
-                        <Flag className="h-4 w-4 mr-2" />
-                        Submit Anonymous Report
-                      </Button>
-                    }
-                  />
-                </div> */}
-
                 <AnonymousReportForm />
               </CardContent>
             </Card>
@@ -682,3 +478,4 @@ const [sent, setSent] = useState(false);
 };
 
 export default UserDashboard;
+
