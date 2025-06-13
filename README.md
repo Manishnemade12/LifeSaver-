@@ -1,6 +1,6 @@
-# 🆘 Beacon Safe Connect
+# 🆘 LifeSaver+
 
-Beacon Safe Connect is a real-time emergency response platform built with **React + TypeScript** and **Supabase**. It enables users to instantly send SOS alerts, automatically notifying nearby hospitals and responders within a 5 km radius.
+LifeSaver+ is a real-time emergency response platform built with **React + TypeScript** and **Supabase**. It enables users to instantly send SOS alerts, automatically notifying nearby hospitals and responders within a 5 km radius.
 
 ## 🚀 Features
 
