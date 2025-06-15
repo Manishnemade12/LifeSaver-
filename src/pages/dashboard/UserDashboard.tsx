@@ -20,6 +20,8 @@ import AnonymousReportsHistory from "@/components/AnonymousReportsHistory";
 import { useHospitalSOS } from '@/hooks/useHospitalSOS';
 import { supabase } from "@/integrations/supabase/client";
 import SOSButton from "@/components/r/sosButton";
+import { SOSButton1 } from "@/components/r/SOSButton1";
+import { sendSOSMail } from "@/hooks/mailhook";
 interface HospitalSOSDialogProps {
   userLocation: { lat: number; lng: number } | null;
 }
@@ -74,20 +76,47 @@ const { sendHospitalSOS, loading } = useHospitalSOS();
 
 
   // Handle SOS button click
+  // const handleSOSClick = async (type: "medical" | "safety" | "general") => {
+  //   setSelectedSOSType(type); // Store the selected type
+  //   setSosCountdown(3);
+  //   setActiveSOS(true);
+
+  //   toast({
+  //     title: "SOS Alert Starting",
+  //     description: `${type.toUpperCase()} emergency alert in 3 seconds. Tap cancel to stop.`,
+  //   });
+
+  //   // if (type === "medical") {
+  //   //   await handleAutoSendSOS(); // call directly
+  //   // }
+  // };
+
   const handleSOSClick = async (type: "medical" | "safety" | "general") => {
-    setSelectedSOSType(type); // Store the selected type
-    setSosCountdown(3);
-    setActiveSOS(true);
+  setSelectedSOSType(type);
+  setSosCountdown(3);
+  setActiveSOS(true);
 
+  toast({
+    title: "SOS Alert Starting",
+    description: `${type.toUpperCase()} emergency alert in 3 seconds. Tap cancel to stop.`,
+  });
+
+  // Optional delay logic ke baad call kar sakte ho
+  // ya direct test ke liye yaha bhi call karo:
+
+  try {
+    await sendSOSMail(type);
     toast({
-      title: "SOS Alert Starting",
-      description: `${type.toUpperCase()} emergency alert in 3 seconds. Tap cancel to stop.`,
+      title: `${type.toUpperCase()} SOS Sent`,
+      description: "Email has been successfully sent!",
     });
-
-    // if (type === "medical") {
-    //   await handleAutoSendSOS(); // call directly
-    // }
-  };
+  } catch (error) {
+    toast({
+      title: "Failed to send SOS",
+      description: "Please check your connection or location settings.",
+    });
+  }
+};
 
   const handleSOSCancel = () => {
     setSosCountdown(0);
@@ -472,6 +501,7 @@ const { sendHospitalSOS, loading } = useHospitalSOS();
             </CardContent>
           </TabsContent>
         </Tabs>
+        <SOSButton1 />
       </div>
     </div>
   );

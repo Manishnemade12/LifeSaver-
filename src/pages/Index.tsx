@@ -42,12 +42,12 @@ const Index = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/auth/user">
               <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3">
-                I Need Help - User Access
+                User Access
               </Button>
             </Link>
             <Link to="/auth/responder">
               <Button size="lg" variant="outline" className="border-red-600 text-red-600 hover:bg-red-50 px-8 py-3">
-                I'm a Responder
+               Responder Portal , social authorities
               </Button>
             </Link>
             <Link to="/auth/hospital">
@@ -163,3 +163,24 @@ const Index = () => {
 };
 
 export default Index;
+
+
+
+
+
+
+
+
+
+
+
+// Service ID
+// service_e6vdbbf
+
+// Public Key
+// uIUZ0HxEtfzAhDQ9S
+// Private Key
+// oz5J4TvU_Tqut2rym_AYQ
+
+
+// sirf yahi mili baki kya kaha se milega?
