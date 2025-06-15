@@ -20,8 +20,8 @@ import AnonymousReportsHistory from "@/components/AnonymousReportsHistory";
 import { useHospitalSOS } from '@/hooks/useHospitalSOS';
 import { supabase } from "@/integrations/supabase/client";
 import SOSButton from "@/components/r/sosButton";
-import { SOSButton1 } from "@/components/r/SOSButton1";
 import { sendSOSMail } from "@/hooks/mailhook";
+import EmergencyContacts from "@/components/EmergencyContacts";
 interface HospitalSOSDialogProps {
   userLocation: { lat: number; lng: number } | null;
 }
@@ -373,69 +373,7 @@ const { sendHospitalSOS, loading } = useHospitalSOS();
           </TabsContent>
 
           <TabsContent value="contacts" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Emergency Contacts</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {/* Add Contact Form */}
-                  <div className="grid md:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
-                    <div>
-                      <Label htmlFor="contactName">Name</Label>
-                      <Input
-                        id="contactName"
-                        value={newContact.name}
-                        onChange={(e) => setNewContact({ ...newContact, name: e.target.value })}
-                        placeholder="Contact name"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="contactPhone">Phone</Label>
-                      <Input
-                        id="contactPhone"
-                        value={newContact.phone}
-                        onChange={(e) => setNewContact({ ...newContact, phone: e.target.value })}
-                        placeholder="+1 (555) 123-4567"
-                      />
-                    </div>
-                    <div className="flex items-end">
-                      <Button onClick={handleAddContact} className="w-full">
-                        Add Contact
-                      </Button>
-                    </div>
-                  </div>
-
-                  {/* Contact List */}
-                  <div className="space-y-2">
-                    {contacts.map((contact) => (
-                      <div key={contact.id} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div>
-                          <p className="font-semibold">{contact.name}</p>
-                          <p className="text-gray-600">{contact.phone}</p>
-                        </div>
-                        <div className="flex space-x-2">
-                          <Button
-                            size="sm"
-                            onClick={() => callContact(contact.phone)}
-                            className="bg-green-600 hover:bg-green-700"
-                          >
-                            <Phone className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => removeContact(contact.id)}
-                          >
-                            Remove
-                          </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+           <EmergencyContacts />
           </TabsContent>
 
           <TabsContent value="history" className="space-y-6">
@@ -501,7 +439,6 @@ const { sendHospitalSOS, loading } = useHospitalSOS();
             </CardContent>
           </TabsContent>
         </Tabs>
-        <SOSButton1 />
       </div>
     </div>
   );

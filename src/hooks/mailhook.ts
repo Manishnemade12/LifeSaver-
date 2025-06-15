@@ -1,36 +1,76 @@
-// mailhook.ts (ye file src/hooks ya src/utils me rakh sakte ho)
+// src/utils/mailhook.ts
 
-import emailjs from '@emailjs/browser';
+import emailjs from "@emailjs/browser";
+import { supabase } from "@/integrations/supabase/client";
 
-export const sendSOSMail = async (messageType: "medical" | "safety" | "general"): Promise<void> => {
+export const sendSOSMail = async (
+  messageType: "medical" | "safety" | "general"
+): Promise<void> => {
   return new Promise((resolve, reject) => {
-    navigator.geolocation.getCurrentPosition(async (pos) => {
-      const latitude = pos.coords.latitude.toFixed(6);
-      const longitude = pos.coords.longitude.toFixed(6);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const latitude = pos.coords.latitude.toFixed(6);
+        const longitude = pos.coords.longitude.toFixed(6);
+        const locationLink = `https://www.google.com/maps?q=${latitude},${longitude}`;
 
-      const templateParams = {
-        to_email: "jiadu4979@gmail.com", // 🔁 future me dynamic bhi kar sakte ho
-        latitude,
-        longitude,
-        location_link: `https://www.google.com/maps?q=${latitude},${longitude}`,
-        message_type: messageType.toUpperCase() + " SOS",
-      };
+        // 1. Get logged-in user
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
 
-      try {
-        await emailjs.send(
-          'service_e6vdbbf',
-          'template_azq1t1s',
-          templateParams,
-          'uIUZ0HxEtfzAhDQ9S'
+        if (userError || !user) {
+          console.error("❌ User not found", userError);
+          reject("User not authenticated");
+          return;
+        }
+
+        // 2. Get all emergency emails for this user
+        const { data: contacts, error: contactsError } = await supabase
+          .from("emergency_contacts")
+          .select("email")
+          .eq("user_id", user.id);
+
+        if (contactsError || !contacts?.length) {
+          console.error("❌ No emergency contacts found", contactsError);
+          reject("No emergency emails found");
+          return;
+        }
+
+        // 3. Filter valid unique emails
+        const emails = Array.from(
+          new Set(contacts.map((c) => c.email).filter(Boolean))
         );
-        resolve();
-      } catch (error) {
-        console.error("❌ Error sending email:", error);
-        reject(error);
+
+        // 4. Send mail to each email via EmailJS
+        for (const email of emails) {
+          const templateParams = {
+            to_email: email,
+            latitude,
+            longitude,
+            location_link: locationLink,
+            message_type: messageType.toUpperCase() + " SOS",
+          };
+
+          try {
+            await emailjs.send(
+              "service_e6vdbbf",
+              "template_azq1t1s",
+              templateParams,
+              "uIUZ0HxEtfzAhDQ9S"
+            );
+          } catch (mailError) {
+            console.error(`❌ Error sending to ${email}`, mailError);
+            // Don't reject here; just log the error and continue
+          }
+        }
+
+        resolve(); // All attempts done
+      },
+      (err) => {
+        console.error("❌ Location error:", err);
+        reject(err);
       }
-    }, (err) => {
-      console.error("❌ Location error:", err);
-      reject(err);
-    });
+    );
   });
 };

@@ -123,12 +123,14 @@ export type Database = {
           id: string
           name: string
           phone: string
+           email: string
           user_id: string
         }
         Insert: {
           created_at?: string | null
           id?: string
           name: string
+           email: string
           phone: string
           user_id: string
         }
@@ -137,6 +139,7 @@ export type Database = {
           id?: string
           name?: string
           phone?: string
+           email?: string
           user_id?: string
         }
         Relationships: [
