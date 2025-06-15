@@ -19,7 +19,7 @@ import AnonymousReportForm from "@/components/AnonymousReportForm";
 import AnonymousReportsHistory from "@/components/AnonymousReportsHistory";
 import { useHospitalSOS } from '@/hooks/useHospitalSOS';
 import { supabase } from "@/integrations/supabase/client";
-import SOSButton from "@/components/r/sosButton";
+import SOSButton from "@/components/r/SOSButton";
 import { sendSOSMail } from "@/hooks/mailhook";
 import EmergencyContacts from "@/components/EmergencyContacts";
 interface HospitalSOSDialogProps {
