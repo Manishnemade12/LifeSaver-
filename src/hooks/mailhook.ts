@@ -54,10 +54,10 @@ export const sendSOSMail = async (
 
           try {
             await emailjs.send(
-              "service_e6vdbbf",
-              "template_azq1t1s",
+              import.meta.env.VITE_EMAILJS_SERVICE_ID,
+              import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
               templateParams,
-              "uIUZ0HxEtfzAhDQ9S"
+              import.meta.env.VITE_EMAILJS_PUBLIC_KEY
             );
           } catch (mailError) {
             console.error(`❌ Error sending to ${email}`, mailError);

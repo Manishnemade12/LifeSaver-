@@ -18,13 +18,9 @@ type Contact = {
 
 export default function EmergencyContacts() {
   const [contacts, setContacts] = useState<Contact[]>([]);
-  const [newContact, setNewContact] = useState({
-    name: "",
-    phone: "",
-    email: "",
-  });
+  const [newContact, setNewContact] = useState({ name: "", phone: "", email: "" });
+  const [editingId, setEditingId] = useState<string | null>(null);
 
-  // Fetch contacts on mount
   useEffect(() => {
     fetchContacts();
   }, []);
@@ -38,52 +34,57 @@ export default function EmergencyContacts() {
       .select("*")
       .eq("user_id", user.id);
 
-    if (!error && data) {
-      setContacts(data as Contact[]);
-    }
+    if (!error && data) setContacts(data as Contact[]);
   };
 
-  const addContact = async (name: string, phone: string, email: string) => {
+  const addContact = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
     const { error } = await supabase.from("emergency_contacts").insert([
       {
-        name,
-        phone,
-        email,
+        ...newContact,
         user_id: user.id,
       },
     ]);
 
     if (!error) {
+      setNewContact({ name: "", phone: "", email: "" });
       fetchContacts();
-    } else {
-      console.error("Error adding contact:", error.message);
+    }
+  };
+
+  const updateContact = async () => {
+    if (!editingId) return;
+
+    const { error } = await supabase
+      .from("emergency_contacts")
+      .update({ ...newContact })
+      .eq("id", editingId);
+
+    if (!error) {
+      setEditingId(null);
+      setNewContact({ name: "", phone: "", email: "" });
+      fetchContacts();
     }
   };
 
   const removeContact = async (id: string) => {
     const { error } = await supabase.from("emergency_contacts").delete().eq("id", id);
-    if (!error) {
-      fetchContacts();
-    }
-  };
-
-  const handleAddContact = async () => {
-    const { name, phone, email } = newContact;
-    if (name && phone && email) {
-      await addContact(name, phone, email);
-      setNewContact({ name: "", phone: "", email: "" });
-    }
+    if (!error) fetchContacts();
   };
 
   const callContact = (phone: string) => {
     window.open(`tel:${phone}`);
   };
 
-  const call911 = () => {
-    window.open("tel:911");
+  const handleEdit = (contact: Contact) => {
+    setEditingId(contact.id);
+    setNewContact({
+      name: contact.name,
+      phone: contact.phone,
+      email: contact.email,
+    });
   };
 
   return (
@@ -94,7 +95,7 @@ export default function EmergencyContacts() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {/* Add Contact Form */}
+            {/* Add/Update Contact Form */}
             <div className="grid md:grid-cols-4 gap-4 p-4 bg-gray-50 rounded-lg">
               <div>
                 <Label htmlFor="contactName">Name</Label>
@@ -125,16 +126,25 @@ export default function EmergencyContacts() {
                 />
               </div>
               <div className="flex items-end">
-                <Button onClick={handleAddContact} className="w-full">
-                  Add Contact
-                </Button>
+                {editingId ? (
+                  <Button onClick={updateContact} className="w-full">
+                    Update Contact
+                  </Button>
+                ) : (
+                  <Button onClick={addContact} className="w-full">
+                    Add Contact
+                  </Button>
+                )}
               </div>
             </div>
 
             {/* Contact List */}
             <div className="space-y-2">
               {contacts.map((contact) => (
-                <div key={contact.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div
+                  key={contact.id}
+                  className="flex items-center justify-between p-4 border rounded-lg"
+                >
                   <div>
                     <p className="font-semibold">{contact.name}</p>
                     <p className="text-gray-600">{contact.phone}</p>
@@ -151,6 +161,13 @@ export default function EmergencyContacts() {
                     <Button
                       size="sm"
                       variant="outline"
+                      onClick={() => handleEdit(contact)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
                       onClick={() => removeContact(contact.id)}
                     >
                       Remove
