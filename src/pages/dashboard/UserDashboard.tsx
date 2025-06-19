@@ -213,7 +213,7 @@ const { sendHospitalSOS, loading } = useHospitalSOS();
                 <User className="h-4 w-4 mr-2" />
                 Profile
               </Button>
-
+  {/* const [showProfile, setShowProfile] = useState(false); */}
               <UserProfile
                 isOpen={showProfile}
                 onClose={() => setShowProfile(false)}

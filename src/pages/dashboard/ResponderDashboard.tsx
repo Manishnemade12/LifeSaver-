@@ -15,6 +15,7 @@ import { NavigationButton } from "@/components/NavigationButton";
 import { AnonymousReportsManager } from "@/components/AnonymousReportsManager";
 import ResponderProfile from "@/components/ResponderProfile";
 import ResponderReportsManagement from "@/components/ResponderReportsManagement";
+import EmergencyMap from "@/components/r/map";
 
 
 const ResponderDashboard = () => {
@@ -56,10 +57,8 @@ const ResponderDashboard = () => {
     }
   };
 
-  const getDistanceToAlert = (alert: any) => {
-    if (!currentLocation || !alert.location_lat || !alert.location_lng) {
-      return null;
-    }
+const getDistanceToAlert = (alert: any) => {
+    if (!currentLocation || !alert.location_lat || !alert.location_lng) return null;
 
     const distance = calculateDistance(
       currentLocation.lat,
@@ -67,16 +66,31 @@ const ResponderDashboard = () => {
       alert.location_lat,
       alert.location_lng
     );
-
     return distance.toFixed(1) + " km";
   };
 
+  const filterAlertsWithinRadius = (alerts: any[]) => {
+  if (!currentLocation) return [];
+
+  return alerts.filter(alert => {
+    if (!alert.location_lat || !alert.location_lng) return false;
+    
+    const distance = calculateDistance(
+      currentLocation.lat,
+      currentLocation.lng,
+      alert.location_lat,
+      alert.location_lng
+    );
+
+    return distance <= 50; // sirf 50km ke andar ke alerts
+  });
+};
+
   // Filter alerts based on responder verification status and duty status
-  const visibleAlerts = profile?.responder_details?.is_verified
-    ? alerts.filter(alert => alert.status !== 'completed')
+ const visibleAlerts = profile?.responder_details?.is_verified && onDuty
+    ? filterAlertsWithinRadius(alerts.filter(alert => alert.status !== 'completed'))
     : [];
 
-  // Get responder's alert history
   const responderHistory = alerts.filter(alert => alert.responder_id === profile?.id);
 
   if (alertsLoading || responderLoading) {
@@ -89,6 +103,9 @@ const ResponderDashboard = () => {
       </div>
     );
   }
+
+
+  
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -325,13 +342,9 @@ const ResponderDashboard = () => {
                 <CardTitle>Area Coverage Map</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="bg-gray-100 rounded-lg h-96 flex items-center justify-center">
-                  <div className="text-center">
-                    <MapPin className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                    <p className="text-gray-600">Interactive map showing emergency incidents and responder locations</p>
-                    <p className="text-sm text-gray-500 mt-2">Real-time positioning and incident markers</p>
-                  </div>
-                </div>
+              <div style={{ height: "100vh", width: "86vw" }}>
+  <EmergencyMap userLocation={null} />
+</div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -387,21 +400,3 @@ const ResponderDashboard = () => {
 };
 
 export default ResponderDashboard;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

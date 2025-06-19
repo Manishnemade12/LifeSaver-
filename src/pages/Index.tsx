@@ -1,10 +1,13 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Shield, Users, MapPin, Bell } from "lucide-react";
+import { Shield, Users, MapPin, Bell, User } from "lucide-react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
-
+import UserProfile from "@/components/UserProfile";
+import DummyLogin from "@/components/r/dummylogin";
 const Index = () => {
+    const [showProfile, setShowProfile] = useState(false);
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-red-50">
       {/* Header */}
@@ -33,7 +36,19 @@ const Index = () => {
       {/* Hero Section */}
       <section className="py-20 px-4">
         <div className="max-w-4xl mx-auto text-center">
-          <h1 className="text-5xl font-bold text-gray-900 mb-6">
+          <span className=""><h3>Click to view dummy login details</h3></span>
+           <div className="flex items-between justify-center">
+             
+
+              <DummyLogin
+                isOpen={showProfile}
+                onClose={() => setShowProfile(false)}
+                onProfileUpdate={() => {
+                  setShowProfile(false);
+                }}
+              /> 
+          </div>
+          <h1 className="text-5xl font-bold text-gray-900 mb-6 margin-top: 20px">
             Emergency Response Platform
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">

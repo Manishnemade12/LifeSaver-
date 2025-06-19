@@ -118,6 +118,7 @@ const UserProfile = ({ isOpen, onClose, onProfileUpdate }: UserProfileProps) => 
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter email address"
+              disabled
             />
           </div>
 
