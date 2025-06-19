@@ -169,7 +169,7 @@ const Index = () => {
             <span className="text-lg font-semibold text-gray-900">EmergencyConnect</span>
           </div>
           <p className="text-gray-600">
-            © 2024 EmergencyConnect. Connecting communities for safety and emergency response.
+            © 2025 EmergencyConnect. Developted By @Manish_Nemade as Yukti Project.
           </p>
         </div>
       </footer>
