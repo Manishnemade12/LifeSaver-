@@ -1,8 +1,19 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog';
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent
+} from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Copy, Mail, Lock } from 'lucide-react';
@@ -36,16 +47,17 @@ export default function DummyLogin() {
       <DialogTrigger asChild>
         <Button variant="outline">Open Dummy Login</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
+
+      <DialogContent className="w-[95vw] sm:max-w-md max-h-[90vh] overflow-y-auto rounded-lg">
         <DialogHeader>
-          <DialogTitle>Dummy Login Details ,for testing purpose only. </DialogTitle>
-         <h1 className="text-sm text-gray-500">
-           both email and password are same
-</h1>
+          <DialogTitle className="text-base sm:text-lg">
+            Dummy Login Details (for testing only)
+          </DialogTitle>
+          <p className="text-xs text-gray-500">Both email and password are the same</p>
         </DialogHeader>
 
         <Tabs defaultValue="user" className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-3 text-xs sm:text-sm overflow-x-auto no-scrollbar">
             <TabsTrigger value="user">User</TabsTrigger>
             <TabsTrigger value="hospital">Hospital</TabsTrigger>
             <TabsTrigger value="responder">Responder</TabsTrigger>
@@ -53,12 +65,13 @@ export default function DummyLogin() {
 
           {Object.entries(dummyData).map(([key, creds]) => (
             <TabsContent key={key} value={key} className="space-y-4 pt-4">
-              <div className="space-y-2">
+              {/* Email */}
+              <div className="space-y-1">
                 <label className="text-sm font-medium flex items-center gap-2">
                   <Mail className="h-4 w-4" /> Email
                 </label>
-                <div className="flex items-center gap-2">
-                  <Input readOnly value={creds.email} />
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                  <Input readOnly value={creds.email} className="flex-1" />
                   <Button
                     size="icon"
                     variant="secondary"
@@ -71,12 +84,13 @@ export default function DummyLogin() {
                 )}
               </div>
 
-              <div className="space-y-2">
+              {/* Password */}
+              <div className="space-y-1">
                 <label className="text-sm font-medium flex items-center gap-2">
                   <Lock className="h-4 w-4" /> Password
                 </label>
-                <div className="flex items-center gap-2">
-                  <Input readOnly value={creds.password} type="text" />
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                  <Input readOnly value={creds.password} type="text" className="flex-1" />
                   <Button
                     size="icon"
                     variant="secondary"

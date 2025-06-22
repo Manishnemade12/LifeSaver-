@@ -18,15 +18,15 @@ const Index = () => {
               <Shield className="h-8 w-8 text-red-600" />
               <span className="text-2xl font-bold text-gray-900">EmergencyConnect</span>
             </div>
-            <div className="flex space-x-4">
+            <div className="flex space-x-4 sm:flex hidden ">
               <Link to="/auth/user">
                 <Button variant="outline">User Login</Button>
               </Link>
               <Link to="/auth/responder">
-                <Button className="bg-red-600 hover:bg-red-700">Responder Login</Button>
+                <Button className="bg-red-600 hover:bg-red-700 ">Responder Login</Button>
               </Link>
               <Link to="/auth/hospital">
-                <Button className="bg-blue-600 hover:bg-blue-700">Hospital Login</Button>
+                <Button className="bg-blue-600 hover:bg-blue-700 ">Hospital Login</Button>
               </Link>
             </div>
           </div>

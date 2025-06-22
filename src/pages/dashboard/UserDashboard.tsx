@@ -199,7 +199,7 @@ const { sendHospitalSOS, loading } = useHospitalSOS();
               <Shield className="h-6 w-6 text-red-600" />
               <span className="text-xl font-bold">User Dashboard</span>
               {profile && (
-                <span className="text-gray-600">
+                <span className="text-gray-600 sm:flex hidden">
                   - {profile.first_name} {profile.last_name}
                 </span>
               )}

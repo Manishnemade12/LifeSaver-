@@ -139,43 +139,43 @@ export default function EmergencyContacts() {
             </div>
 
             {/* Contact List */}
-            <div className="space-y-2">
-              {contacts.map((contact) => (
-                <div
-                  key={contact.id}
-                  className="flex items-center justify-between p-4 border rounded-lg"
-                >
-                  <div>
-                    <p className="font-semibold">{contact.name}</p>
-                    <p className="text-gray-600">{contact.phone}</p>
-                    <p className="text-gray-600">{contact.email}</p>
-                  </div>
-                  <div className="flex space-x-2">
-                    <Button
-                      size="sm"
-                      onClick={() => callContact(contact.phone)}
-                      className="bg-green-600 hover:bg-green-700"
-                    >
-                      <Phone className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => handleEdit(contact)}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="destructive"
-                      onClick={() => removeContact(contact.id)}
-                    >
-                      Remove
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div className="space-y-2">
+  {contacts.map((contact) => (
+    <div
+      key={contact.id}
+      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-4 border rounded-lg overflow-x-auto"
+    >
+      <div className="min-w-0">
+        <p className="font-semibold break-words">{contact.name}</p>
+        <p className="text-gray-600 break-words">{contact.phone}</p>
+        <p className="text-gray-600 break-words">{contact.email}</p>
+      </div>
+      <div className="flex flex-wrap gap-2 sm:space-x-2">
+        <Button
+          size="sm"
+          onClick={() => callContact(contact.phone)}
+          className="bg-green-600 hover:bg-green-700"
+        >
+          <Phone className="h-4 w-4" />
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          onClick={() => handleEdit(contact)}
+        >
+          Edit
+        </Button>
+        <Button
+          size="sm"
+          variant="destructive"
+          onClick={() => removeContact(contact.id)}
+        >
+          Remove
+        </Button>
+      </div>
+    </div>
+  ))}
+</div>
           </div>
         </CardContent>
       </Card>

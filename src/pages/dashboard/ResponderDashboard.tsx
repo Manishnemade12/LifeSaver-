@@ -16,7 +16,7 @@ import { AnonymousReportsManager } from "@/components/AnonymousReportsManager";
 import ResponderProfile from "@/components/ResponderProfile";
 import ResponderReportsManagement from "@/components/ResponderReportsManagement";
 import EmergencyMap from "@/components/r/map";
-
+import { Separator } from "@/components/ui/separator";
 
 const ResponderDashboard = () => {
   const { profile, signOut } = useAuth();
@@ -103,91 +103,121 @@ const getDistanceToAlert = (alert: any) => {
       </div>
     );
   }
-
-
-  
-
   return (
+
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Shield className="h-6 w-6 text-red-600" />
-              <span className="text-xl font-bold">Responder Dashboard</span>
-              {profile && (
-                <span className="text-gray-600">
-                  - {profile.first_name} {profile.last_name} ({profile.responder_details?.responder_type})
-                </span>
-              )}
+      {/* Improved Header */}
+      <header className="bg-white shadow-sm border-b sticky top-0 z-40">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6">
+          {/* Top Row - Brand and User Actions */}
+          <div className="flex items-center justify-between py-4">
+            {/* Brand Section */}
+            <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-2">
+                <Shield className="h-7 w-7 text-red-600" />
+                <div className="flex flex-col">
+                  <span className="text-lg sm:text-xl font-bold text-gray-900">Responder Dashboard</span>
+                  {profile && (
+                    <span className="text-xs sm:text-sm text-gray-500 hidden sm:block">
+                      {profile.first_name} {profile.last_name} • {profile.responder_details?.responder_type}
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
-            <div className="flex items-center space-x-4">
+
+            {/* User Actions */}
+            <div className="flex items-center space-x-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowProfile(true)}
+                className="hidden sm:flex"
+              >
+                <User className="h-4 w-4 mr-2" />
+                Profile
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setShowProfile(true)}
+                className="sm:hidden"
+              >
+                <User className="h-4 w-4" />
+              </Button>
+              <Button variant="outline" size="sm" onClick={signOut}>
+                <span className="hidden sm:inline">Logout</span>
+                <span className="sm:hidden">Logout</span>
+              </Button>
+            </div>
+          </div>
+
+          <Separator className="my-2" />
+
+          {/* Status and Controls Row */}
+          <div className="pb-4">
+            <div className="flex flex-col space-y-4 lg:flex-row lg:items-center lg:justify-between lg:space-y-0">
+              {/* Duty Controls */}
               {profile?.responder_details?.is_verified && (
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm">Off Duty</span>
-                  <Switch
-                    checked={onDuty}
-                    onCheckedChange={updateDutyStatus}
-                  />
-                  <span className="text-sm">On Duty</span>
+                <div className="flex items-center justify-center lg:justify-start">
+                  <div className="flex items-center space-x-4 bg-gray-50 rounded-lg px-4 py-2">
+                    <span className="text-sm font-medium text-gray-700">Duty Status:</span>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm text-gray-600">Off</span>
+                      <Switch
+                        checked={onDuty}
+                        onCheckedChange={updateDutyStatus}
+                      />
+                      <span className="text-sm text-gray-600">On</span>
+                    </div>
+                  </div>
                 </div>
               )}
-              <Badge variant={onDuty ? "default" : "secondary"} className={onDuty ? "bg-green-600" : ""}>
-                {onDuty ? "ON DUTY" : "OFF DUTY"}
-              </Badge>
-              {!profile?.responder_details?.is_verified && (
-                <Badge variant="outline" className="text-yellow-600">
-                  PENDING VERIFICATION
-                </Badge>
-              )}
-              {currentLocation && (
-                <Badge variant="outline" className="text-green-600">
-                  <Navigation className="h-3 w-3 mr-1" />
-                  Location Active
-                </Badge>
-              )}
-              {locationError && (
-                <Badge variant="outline" className="text-red-600">
-                  Location Error
-                </Badge>
-              )}
 
-              <div className="flex items-center space-x-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowProfile(true)}
+              {/* Status Badges */}
+              <div className="flex flex-wrap items-center justify-center lg:justify-end gap-2">
+                <Badge 
+                  variant={onDuty ? "default" : "secondary"} 
+                  className={`${onDuty ? "bg-green-600 hover:bg-green-700" : "bg-gray-500"} text-white`}
                 >
-                  <User className="h-4 w-4 mr-2" />
-                  Profile
-                </Button>
-                <ResponderProfile
-                  isOpen={showProfile}
-                  onClose={() => setShowProfile(false)}
-                  onProfileUpdate={() => {
-                    // agar data fetch karna hai to yahan kar lena
-                    setShowProfile(false);
-                  }}
-                />
-                <Button variant="outline" onClick={signOut}>
-                  Logout
-                </Button>
+                  {onDuty ? "ON DUTY" : "OFF DUTY"}
+                </Badge>
+                
+                {!profile?.responder_details?.is_verified && (
+                  <Badge variant="outline" className="text-yellow-600 border-yellow-300">
+                    PENDING VERIFICATION
+                  </Badge>
+                )}
+                
+                {currentLocation && (
+                  <Badge variant="outline" className="text-green-600 border-green-300">
+                    <Navigation className="h-3 w-3 mr-1" />
+                    <span className="hidden sm:inline">Location Active</span>
+                    <span className="sm:hidden">GPS</span>
+                  </Badge>
+                )}
+                
+                {locationError && (
+                  <Badge variant="outline" className="text-red-600 border-red-300">
+                    <span className="hidden sm:inline">Location Error</span>
+                    <span className="sm:hidden">GPS Error</span>
+                  </Badge>
+                )}
               </div>
             </div>
           </div>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {!profile?.responder_details?.is_verified && (
           <Card className="mb-6 border-yellow-200 bg-yellow-50">
-            <CardContent className="p-6">
-              <div className="flex items-center space-x-3">
-                <Clock className="h-6 w-6 text-yellow-600" />
+            <CardContent className="p-4 sm:p-6">
+              <div className="flex items-start space-x-3">
+                <Clock className="h-6 w-6 text-yellow-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <h3 className="font-semibold text-yellow-800">Account Pending Verification</h3>
-                  <p className="text-yellow-700">
+                  <h3 className="font-semibold text-yellow-800 text-sm sm:text-base">Account Pending Verification</h3>
+                  <p className="text-yellow-700 text-xs sm:text-sm mt-1">
                     Your responder account is currently being verified. You will receive access to emergency alerts once your credentials are approved.
                   </p>
                 </div>
@@ -196,139 +226,205 @@ const getDistanceToAlert = (alert: any) => {
           </Card>
         )}
 
-        <Tabs defaultValue="alerts" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="alerts">Active Alerts</TabsTrigger>
-            <TabsTrigger value="map">Area Map</TabsTrigger>
-            <TabsTrigger value="history">Response History</TabsTrigger>
-            <TabsTrigger value="reports">Reports</TabsTrigger>
+        <Tabs defaultValue="alerts" className="space-y-6 w-full">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 h-auto">
+            <TabsTrigger value="alerts" className="text-xs sm:text-sm px-2 py-3">
+              <span className="hidden sm:inline">Active Alerts</span>
+              <span className="sm:hidden">Alerts</span>
+            </TabsTrigger>
+            <TabsTrigger value="map" className="text-xs sm:text-sm px-2 py-3">
+              <span className="hidden sm:inline">Area Map</span>
+              <span className="sm:hidden">Map</span>
+            </TabsTrigger>
+            <TabsTrigger value="history" className="text-xs sm:text-sm px-2 py-3">
+              <span className="hidden sm:inline">Response History</span>
+              <span className="sm:hidden">History</span>
+            </TabsTrigger>
+            <TabsTrigger value="reports" className="text-xs sm:text-sm px-2 py-3">Reports</TabsTrigger>
           </TabsList>
 
           <TabsContent value="alerts" className="space-y-6">
-            {/* Stats Cards - Using the new component */}
             <ResponderStatsCards />
 
-            {/* Active Alerts */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center justify-between">
-                  <span>Emergency Alerts</span>
-                  <Badge variant="outline">
-                    {visibleAlerts.length} Active
-                  </Badge>
-                </CardTitle>
+            {/* Improved Emergency Alerts Section */}
+            <Card className="shadow-sm">
+              <CardHeader className="pb-4">
+                <div className="flex flex-col space-y-3 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+                  <div className="flex items-center space-x-3">
+                    <div className="p-2 bg-red-50 rounded-lg">
+                      <Ambulance className="h-5 w-5 text-red-600" />
+                    </div>
+                    <div>
+                      <CardTitle className="text-lg sm:text-xl text-gray-900">Emergency Alerts</CardTitle>
+                      <p className="text-sm text-gray-500 mt-1">Active emergencies in your area</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-3">
+                    <Badge variant="outline" className="bg-red-50 text-red-700 border-red-200">
+                      {visibleAlerts.length} Active
+                    </Badge>
+                    {onDuty && (
+                      <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">
+                        <div className="w-2 h-2 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                        Live
+                      </Badge>
+                    )}
+                  </div>
+                </div>
               </CardHeader>
-              <CardContent>
+              
+              <CardContent className="px-4 sm:px-6">
+                {/* Status Messages */}
                 {!profile?.responder_details?.is_verified && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-                    <p className="text-yellow-800">
-                      Your account is pending verification. You will see emergency alerts once verified.
-                    </p>
+                  <div className="bg-gradient-to-r from-yellow-50 to-amber-50 border border-yellow-200 rounded-lg p-4 mb-6">
+                    <div className="flex items-start space-x-3">
+                      <Clock className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <h4 className="font-medium text-yellow-800 text-sm">Verification Required</h4>
+                        <p className="text-yellow-700 text-xs sm:text-sm mt-1">
+                          Complete your account verification to start receiving emergency alerts.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 )}
 
                 {profile?.responder_details?.is_verified && !onDuty && (
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-                    <p className="text-yellow-800">
-                      You are currently off duty. Turn on duty status to receive emergency alerts.
-                    </p>
+                  <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 mb-6">
+                    <div className="flex items-start space-x-3">
+                      <Shield className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <h4 className="font-medium text-blue-800 text-sm">Currently Off Duty</h4>
+                        <p className="text-blue-700 text-xs sm:text-sm mt-1">
+                          Switch to "On Duty" to start receiving emergency alerts in your area.
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 )}
 
+                {/* Alerts List */}
                 <div className="space-y-4">
                   {visibleAlerts.map((alert) => {
                     const distance = getDistanceToAlert(alert);
 
                     return (
-                      <div key={alert.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
-                        <div className="flex items-start justify-between">
-                          <div className="flex items-start space-x-3">
-                            {getAlertIcon(alert.type)}
-                            <div className="flex-1">
-                              <div className="flex items-center space-x-2 mb-2">
-                                <Badge className={getAlertTypeColor(alert.type)}>
-                                  {alert.type.toUpperCase()}
-                                </Badge>
-                                <Badge className={getStatusColor(alert.status)}>
-                                  {alert.status.toUpperCase()}
-                                </Badge>
-                                <span className="text-sm text-gray-600">
-                                  {new Date(alert.created_at).toLocaleTimeString()}
-                                </span>
-                                {distance && (
-                                  <Badge variant="outline" className="text-blue-600">
-                                    <MapPin className="h-3 w-3 mr-1" />
-                                    {distance}
-                                  </Badge>
-                                )}
+                      <Card key={alert.id} className="border-l-4 border-l-red-500 hover:shadow-md transition-all duration-200 bg-white">
+                        <CardContent className="p-4 sm:p-6">
+                          <div className="flex flex-col space-y-4 lg:flex-row lg:items-start lg:justify-between lg:space-y-0">
+                            {/* Alert Information */}
+                            <div className="flex items-start space-x-4 flex-1 min-w-0">
+                              <div className="flex-shrink-0 p-2 bg-red-50 rounded-lg">
+                                {getAlertIcon(alert.type)}
                               </div>
-                              <p className="font-semibold">{alert.location_description}</p>
-                              <p className="text-sm text-gray-600">
-                                Contact: {alert.profiles?.phone || 'N/A'}
-                              </p>
-                              {alert.description && (
-                                <p className="text-sm text-gray-700 mt-1">{alert.description}</p>
+                              
+                              <div className="flex-1 min-w-0">
+                                {/* Badge Row */}
+                                <div className="flex flex-wrap items-center gap-2 mb-3">
+                                  <Badge className={`${getAlertTypeColor(alert.type)} text-xs font-medium`}>
+                                    {alert.type.toUpperCase()}
+                                  </Badge>
+                                  <Badge className={`${getStatusColor(alert.status)} text-xs font-medium`}>
+                                    {alert.status.toUpperCase()}
+                                  </Badge>
+                                  {distance && (
+                                    <Badge variant="outline" className="text-blue-600 border-blue-200 text-xs">
+                                      <MapPin className="h-3 w-3 mr-1" />
+                                      {distance}
+                                    </Badge>
+                                  )}
+                                  <span className="text-xs text-gray-500 ml-auto">
+                                    {new Date(alert.created_at).toLocaleTimeString()}
+                                  </span>
+                                </div>
+
+                                {/* Location and Details */}
+                                <div className="space-y-2">
+                                  <h3 className="font-semibold text-gray-900 text-sm sm:text-base truncate">
+                                    {alert.location_description}
+                                  </h3>
+                                  
+                                  {alert.description && (
+                                    <p className="text-sm text-gray-700 break-words">
+                                      {alert.description}
+                                    </p>
+                                  )}
+                                  
+                                  <div className="flex items-center space-x-2 text-xs sm:text-sm text-gray-600">
+                                    <Phone className="h-4 w-4" />
+                                    <span>Contact: {alert.profiles?.phone || 'N/A'}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Action Buttons */}
+                            <div className="flex flex-col space-y-2 lg:w-40 lg:flex-shrink-0">
+                              {alert.profiles?.phone && (
+                                <Button
+                                  size="sm"
+                                  onClick={() => contactUser(alert.profiles.phone)}
+                                  className="bg-blue-600 hover:bg-blue-700 text-white w-full"
+                                >
+                                  <Phone className="h-4 w-4 mr-2" />
+                                  Contact
+                                </Button>
                               )}
+
+                              {alert.status === "active" && (
+                                <Button
+                                  size="sm"
+                                  variant="outline"
+                                  onClick={() => acknowledgeAlert(alert.id)}
+                                  className="w-full border-gray-300 hover:bg-gray-50"
+                                >
+                                  Acknowledge
+                                </Button>
+                              )}
+
+                              {alert.status === "acknowledged" && (
+                                <Button
+                                  size="sm"
+                                  onClick={() => respondToAlert(alert.id)}
+                                  className="bg-red-600 hover:bg-red-700 text-white w-full"
+                                >
+                                  Respond
+                                </Button>
+                              )}
+
+                              {alert.status === "responding" && (
+                                <Button
+                                  size="sm"
+                                  onClick={() => completeAlert(alert.id)}
+                                  className="bg-green-600 hover:bg-green-700 text-white w-full"
+                                >
+                                  Complete
+                                </Button>
+                              )}
+
+                              <NavigationButton
+                                userLat={currentLocation?.lat}
+                                userLng={currentLocation?.lng}
+                                destLat={alert.location_lat}
+                                destLng={alert.location_lng}
+                              />
                             </div>
                           </div>
-
-                          <div className="flex flex-col space-y-2">
-                            {alert.profiles?.phone && (
-                              <Button
-                                size="sm"
-                                onClick={() => contactUser(alert.profiles.phone)}
-                                className="bg-blue-600 hover:bg-blue-700"
-                              >
-                                <Phone className="h-4 w-4 mr-1" />
-                                Contact
-                              </Button>
-                            )}
-
-                            {alert.status === "active" && (
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => acknowledgeAlert(alert.id)}
-                              >
-                                Acknowledge
-                              </Button>
-                            )}
-
-                            {alert.status === "acknowledged" && (
-                              <Button
-                                size="sm"
-                                onClick={() => respondToAlert(alert.id)}
-                                className="bg-red-600 hover:bg-red-700"
-                              >
-                                Respond
-                              </Button>
-                            )}
-
-                            {alert.status === "responding" && (
-                              <Button
-                                size="sm"
-                                onClick={() => completeAlert(alert.id)}
-                                className="bg-green-600 hover:bg-green-700"
-                              >
-                                Complete
-                              </Button>
-                            )}
-
-                            <NavigationButton
-                              userLat={currentLocation?.lat}
-                              userLng={currentLocation?.lng}
-                              destLat={alert.location_lat}
-                              destLng={alert.location_lng}
-                            />
-                          </div>
-                        </div>
-                      </div>
+                        </CardContent>
+                      </Card>
                     );
                   })}
 
+                  {/* Empty State */}
                   {visibleAlerts.length === 0 && profile?.responder_details?.is_verified && onDuty && (
-                    <div className="text-center py-8 text-gray-500">
-                      No active emergency alerts in your area
+                    <div className="text-center py-12">
+                      <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <Shield className="h-8 w-8 text-gray-400" />
+                      </div>
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">All Clear</h3>
+                      <p className="text-gray-500 text-sm max-w-sm mx-auto">
+                        No active emergency alerts in your area. You'll be notified immediately when new emergencies are reported.
+                      </p>
                     </div>
                   )}
                 </div>
@@ -339,12 +435,12 @@ const getDistanceToAlert = (alert: any) => {
           <TabsContent value="map" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Area Coverage Map</CardTitle>
+                <CardTitle className="text-lg sm:text-xl">Area Coverage Map</CardTitle>
               </CardHeader>
-              <CardContent>
-              <div style={{ height: "100vh", width: "86vw" }}>
-  <EmergencyMap userLocation={null} />
-</div>
+              <CardContent className="p-2 sm:p-6">
+                <div className="h-64 sm:h-96 w-full">
+                  <EmergencyMap userLocation={null} />
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -352,24 +448,24 @@ const getDistanceToAlert = (alert: any) => {
           <TabsContent value="history" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
+                <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
                   <History className="h-5 w-5" />
                   <span>Response History</span>
                 </CardTitle>
               </CardHeader>
-              <CardContent>
+              <CardContent className="px-4 sm:px-6">
                 <div className="space-y-4">
                   {responderHistory.map((alert) => (
-                    <div key={alert.id} className="border rounded-lg p-4">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-semibold capitalize">{alert.type} Emergency</p>
-                          <p className="text-sm text-gray-600">{alert.location_description}</p>
-                          <p className="text-sm text-gray-600">
+                    <div key={alert.id} className="border rounded-lg p-3 sm:p-4">
+                      <div className="flex flex-col space-y-2 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+                        <div className="min-w-0 flex-1">
+                          <p className="font-semibold capitalize text-sm sm:text-base">{alert.type} Emergency</p>
+                          <p className="text-xs sm:text-sm text-gray-600 truncate">{alert.location_description}</p>
+                          <p className="text-xs sm:text-sm text-gray-600">
                             {new Date(alert.created_at).toLocaleDateString()} at {new Date(alert.created_at).toLocaleTimeString()}
                           </p>
                         </div>
-                        <div className="text-right">
+                        <div className="flex-shrink-0">
                           <Badge className={getStatusColor(alert.status)}>
                             {alert.status}
                           </Badge>
@@ -378,16 +474,13 @@ const getDistanceToAlert = (alert: any) => {
                     </div>
                   ))}
                   {responderHistory.length === 0 && (
-                    <div className="text-center py-8 text-gray-500">
+                    <div className="text-center py-8 text-gray-500 text-sm">
                       No response history yet
                     </div>
                   )}
                 </div>
               </CardContent>
             </Card>
-
-
-        
           </TabsContent>
 
           <TabsContent value="reports" className="space-y-6">
@@ -395,6 +488,14 @@ const getDistanceToAlert = (alert: any) => {
           </TabsContent>
         </Tabs>
       </div>
+
+      <ResponderProfile
+        isOpen={showProfile}
+        onClose={() => setShowProfile(false)}
+        onProfileUpdate={() => {
+          setShowProfile(false);
+        }}
+      />
     </div>
   );
 };
