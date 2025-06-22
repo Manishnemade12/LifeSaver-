@@ -148,12 +148,12 @@ const Index = () => {
               </Button>
             </Link>
             <Link to="/auth/responder">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-gray-900">
+              <Button size="lg" variant="outline" className="border-white text-gray hover:bg-white hover:text-gray-900">
                 Become a Responder
               </Button>
             </Link>
             <Link to="/auth/hospital">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-gray-900">
+              <Button size="lg" variant="outline" className="border-white text-black hover:bg-white hover:text-gray-900">
                 Register Hospital
               </Button>
             </Link>
@@ -169,7 +169,7 @@ const Index = () => {
             <span className="text-lg font-semibold text-gray-900">EmergencyConnect</span>
           </div>
           <p className="text-gray-600">
-            © 2025 EmergencyConnect. Developted By @Manish_Nemade as Yukti Project.
+            © 2025 EmergencyConnect. Developed By @Manish_Nemade as Yukti Project.
           </p>
         </div>
       </footer>
@@ -178,24 +178,3 @@ const Index = () => {
 };
 
 export default Index;
-
-
-
-
-
-
-
-
-
-
-
-// Service ID
-// service_e6vdbbf
-
-// Public Key
-// uIUZ0HxEtfzAhDQ9S
-// Private Key
-// oz5J4TvU_Tqut2rym_AYQ
-
-
-// sirf yahi mili baki kya kaha se milega?
