@@ -32,3 +32,16 @@ LifeSaver+ is a real-time emergency response platform built with **React + TypeS
   - **Geolocation**: HTML5 Geolocation API
   - **Routing**: React Router
 
+
+🔹 Key Features:
+ 🧭 One-tap SOS Alert – In case of a medical or social emergency, users can send instant SOS alerts with live location.
+
+ 🩺 Smart Medical Assistance – If a user triggers a Medical SOS, the system checks for nearby hospitals within a 5 km radius and notifies them in real time.
+
+ 🚔 Fallback to Authorities – If no hospital is available nearby, the alert is automatically routed to social authorities like police for urgent intervention.
+
+ 📍 Responder & Hospital Dashboards – Designed to track, manage, and update emergency requests, with live navigation to the victim’s location.
+
+ 🔄 Real-time Communication – The system uses a connected database and efficient backend APIs to ensure smooth, live updates across all modules.
+
+📡 Built with a vision to make emergency response faster, smarter, and more accessible — Lifesaver+ bridges the gap between the victim and responders when every second matters.
